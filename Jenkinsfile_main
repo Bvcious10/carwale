@@ -1,9 +1,20 @@
 pipeline{
     agent any
     stages{
-        stage('checks'){
+        stage('SAST scans'){
             steps{
-                echo "it works"
+                dir('client'){
+                    parallel(
+                        "semgrep":{
+                            sh "docker run -v ${WORKSPACE}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
+
+                        },
+                        // "semgrep":{
+                        // },
+                        // "trivyfs":{
+                        // },
+                    )
+                }
             }
         }
     }
