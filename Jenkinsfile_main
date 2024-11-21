@@ -3,10 +3,11 @@ pipeline{
     stages{
         stage('SAST scans'){
             steps{
-                dir('client'){
-                    parallel(
-                        "semgrep":{
-                            sh "docker run -v ${WORKSPACE}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
+              parallel(
+                "semgrep":{
+                    dir('client'){
+                    sh "docker run -v ${WORKSPACE}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
+                    }
 
                         },
                         // "semgrep":{
@@ -18,4 +19,3 @@ pipeline{
             }
         }
     }
-}
