@@ -1,6 +1,12 @@
 pipeline{
     agent any
     stages{
+        stage('checkout'){
+            steps{
+                git branch: 'main', url: 'https://github.com/Bvcious10/carwale.git'
+            }
+        }
+
         stage('terraform validate'){
             steps{
                 dir('client/AKS')
