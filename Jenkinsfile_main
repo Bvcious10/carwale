@@ -1,0 +1,10 @@
+pipeline{
+    agent any
+    stages{
+        stage('checks'){
+            steps{
+                echo "it works"
+            }
+        }
+    }
+}
