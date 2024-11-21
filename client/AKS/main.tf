@@ -1,7 +1,6 @@
 provider "azurerm" {
   subscription_id = "74ec7602-ef77-4350-81e9-6673c7022a2c"
   tenant_id = "6502c7c7-2906-4fab-a94c-6ae8504f48b4"
-  use_azure_cli = true
   features {}
   
 }
