@@ -23,13 +23,13 @@ pipeline{
             }
         }
 
-        stage('terraform plan'){
-            steps{
-                dir('client/AKS'){
-                sh 'terraform plan'
-                }
-            }
-        }
+        // stage('terraform plan'){
+        //     steps{
+        //         dir('client/AKS'){
+        //         sh 'terraform plan'
+        //         }
+        //     }
+        // }
 
         stage('terraform apply/destroy'){
             steps{
