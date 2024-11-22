@@ -6,7 +6,7 @@ docker run --rm -v $PWD:/myapp aquasec/trivy -q image --exit-code 1 --severity C
 
 exit_code=$?
 
-if [[ "${exit_code}" == 1]];then
+if [[ "${exit_code}" == 1]]; then
     echo "Image scanning failed. Vulnerabilities found"
     exit 1;
 else
