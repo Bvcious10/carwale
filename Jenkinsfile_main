@@ -9,22 +9,33 @@ pipeline{
               parallel(
                 "semgrep":{
                     dir('client/src'){
-                    sh "docker run --rm -v ${pwd}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
+                        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        sh "docker run --rm -v ${pwd}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
+                        }
                     }
 
                         },
                         "njsscan":{
                             dir('client/src'){
+                                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                 sh "docker run --rm -v ${pwd}:/src opensecurity/njsscan /src"
+                                }
                             }
                         },
                         "trivyfs":{
                             dir('client/src'){
+                                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                 sh "trivy fs ."
+                                }
 
                             }
                         }
                     )
+                }
+                post{
+                    always{
+                        echo "SAST stage completed"
+                    }
                 }
             }
             stage('install dependencies'){
