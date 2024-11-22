@@ -1,27 +1,88 @@
 pipeline{
     agent any
+    tools{
+        nodejs 'node16'
+    }
     stages{
         stage('SAST scans'){
             steps{
               parallel(
-                // "semgrep":{
-                //     dir('client'){
-                //     sh "docker run --rm -v ${pwd}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
-                //     }
+                "semgrep":{
+                    dir('client/src'){
+                    sh "docker run --rm -v ${pwd}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
+                    }
 
-                //         },
+                        },
                         "njsscan":{
-                            dir('client'){
+                            dir('client/src'){
                                 sh "docker run --rm -v ${pwd}:/src opensecurity/njsscan /src"
                             }
                         },
                         "trivyfs":{
-                            dir('client'){
+                            dir('client/src'){
                                 sh "trivy fs ."
 
                             }
-                        },
+                        }
                     )
+                }
+            }
+            stage('install dependencies'){
+                steps{
+                    dir('client'){
+                    sh "npm install"
+                    }
+
+                }
+            }
+
+            stage('SCA scans'){
+                steps{
+                    script{
+                        dir('client'){
+                            dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'dep-check'
+                            dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+
+                        }
+                    }
+                }
+            }
+            stage('Vulnerability check-docker'){
+                steps{
+                    parallel(
+                        "OPA Conftest":{
+                            dir('client'){
+                                sh "docker run --rm -v ${pwd}:/project openpolicyagent/conftest test --policy opa-docker.rego Dockerfile"
+                            }
+
+                        },
+                        "Trivy scan":{
+                            dir('client'){
+                                sh "bash trivy-base-image-scan.sh"
+                            }
+
+                        }
+                    )
+                }
+            }
+
+            stage('Build docker image'){
+                steps{
+                    script{
+                        withDockerRegistry(credentialsId: 'docker', toolName: 'docker', url: 'docker.io') {
+                            dir('client'){
+                                sh 'docker build -t benvic/car-app:"$GIT_COMMIT"'
+                                sh 'docker push -t benvic/car-app:"$GIT_COMMIT"'
+                            }
+}
+                    }
+                }
+            }
+            stage('docker-image-scan'){
+                steps{
+                    dir('client'){
+                        sh 'trivy image benvic/car-app:"$GIT_COMMIT"'
+                    }
                 }
             }
         }
