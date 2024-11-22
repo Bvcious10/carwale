@@ -6,12 +6,13 @@ pipeline{
               parallel(
                 "semgrep":{
                     dir('client'){
-                    sh "docker run -v ${WORKSPACE}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
+                    sh "docker run --rm -v ${pwd}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
                     }
 
                         },
-                        // "semgrep":{
-                        // },
+                        "njsscan":{
+                            sh "docker run --rm -v ${pwd}:/src opensecurity/njsscan /src"
+                        },
                         // "trivyfs":{
                         // },
                     )
