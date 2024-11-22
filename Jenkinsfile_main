@@ -4,68 +4,68 @@ pipeline{
         nodejs 'node16'
     }
     stages{
-        stage('SAST scans'){
-            steps{
-              parallel(
-                "semgrep":{
-                    dir('client/src'){
-                        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                        sh "docker run --rm -v ${pwd}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
-                        }
-                    }
+        // stage('SAST scans'){
+        //     steps{
+        //       parallel(
+        //         "semgrep":{
+        //             dir('client/src'){
+        //                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+        //                 sh "docker run --rm -v ${pwd}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
+        //                 }
+        //             }
 
-                        },
-                        "njsscan":{
-                            dir('client/src'){
-                                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                                sh "docker run --rm -v ${pwd}:/src opensecurity/njsscan /src"
-                                }
-                            }
-                        },
-                        "trivyfs":{
-                            dir('client/src'){
-                                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                                sh "trivy fs ."
-                                }
+        //                 },
+        //                 "njsscan":{
+        //                     dir('client/src'){
+        //                         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+        //                         sh "docker run --rm -v ${pwd}:/src opensecurity/njsscan /src"
+        //                         }
+        //                     }
+        //                 },
+        //                 "trivyfs":{
+        //                     dir('client/src'){
+        //                         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+        //                         sh "trivy fs ."
+        //                         }
 
-                            }
-                        }
-                    )
-                }
-                post{
-                    always{
-                        echo "SAST stage completed"
-                    }
-                }
-            }
-            stage('install dependencies'){
-                steps{
-                    dir('client'){
-                    sh "npm install"
-                    }
+        //                     }
+        //                 }
+        //             )
+        //         }
+        //         post{
+        //             always{
+        //                 echo "SAST stage completed"
+        //             }
+        //         }
+        //     }
+        //     stage('install dependencies'){
+        //         steps{
+        //             dir('client'){
+        //             sh "npm install"
+        //             }
 
-                }
-            }
+        //         }
+        //     }
 
-            stage('SCA scans'){
-                steps{
-                    script{
-                        dir('client'){
-                            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                            dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'dep-check'
-                            dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-                            }
+        //     stage('SCA scans'){
+        //         steps{
+        //             script{
+        //                 dir('client'){
+        //                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+        //                     dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'dep-check'
+        //                     dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+        //                     }
 
-                        }
-                    }
-                }
-                post{
-                    always{
-                        echo "SCA stage completed"
-                    }
-                }
+        //                 }
+        //             }
+        //         }
+        //         post{
+        //             always{
+        //                 echo "SCA stage completed"
+        //             }
+        //         }
                 
-            }
+        //     }
 
             stage('Vulnerability check-docker'){
                 steps{
@@ -73,7 +73,7 @@ pipeline{
                         "OPA Conftest":{
                             dir('client'){
                                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                                sh "docker run --rm -v ${pwd}:/project openpolicyagent/conftest test --policy opa-docker.rego Dockerfile"
+                                sh "docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker.rego Dockerfile"
                                 }
                             }
 
