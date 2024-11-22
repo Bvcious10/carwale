@@ -97,26 +97,22 @@ pipeline{
 
             stage('Build docker image'){
                 steps{
-                     withDockerRegistry(credentialsId: 'docker', url: 'docker.io') {
-                        dir('client'){
-                            sh 'docker build -t benvic/car-app:$GIT_COMMIT .'
-                            sh 'docker push -t benvic/car-app:$GIT_COMMIT'
-                        }
-                            
-                    
-                       
+                    dir('client'){
+                     withDockerRegistry(credentialsId: 'docker', url: '') {
+                        sh 'docker build -t benvic/car-app:$GIT_COMMIT .'
+                        sh 'docker push -t benvic/car-app:$GIT_COMMIT'
+                        }    
                                   
-                        }        
-                    
+                        }                   
                 }
             }
 
-            stage('docker-image-scan'){
-                steps{
-                    dir('client'){
-                        sh 'trivy image benvic/car-app:"$GIT_COMMIT"'
-                    }
-                }
-            }
+            // stage('docker-image-scan'){
+            //     steps{
+            //         dir('client'){
+            //             sh 'trivy image benvic/car-app:"$GIT_COMMIT"'
+            //         }
+            //     }
+            // }
         }
     }
