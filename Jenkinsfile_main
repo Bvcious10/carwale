@@ -4,17 +4,23 @@ pipeline{
         stage('SAST scans'){
             steps{
               parallel(
-                "semgrep":{
-                    dir('client'){
-                    sh "docker run --rm -v ${pwd}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
-                    }
+                // "semgrep":{
+                //     dir('client'){
+                //     sh "docker run --rm -v ${pwd}:/src --workdir /src returntocorp/semgrep-agent:v1 semgrep-agent --config p/ci"
+                //     }
 
-                        },
+                //         },
                         "njsscan":{
-                            sh "docker run --rm -v ${pwd}:/src opensecurity/njsscan /src"
+                            dir('client'){
+                                sh "docker run --rm -v ${pwd}:/src opensecurity/njsscan /src"
+                            }
                         },
-                        // "trivyfs":{
-                        // },
+                        "trivyfs":{
+                            dir('client'){
+                                sh "trivy fs ."
+
+                            }
+                        },
                     )
                 }
             }
