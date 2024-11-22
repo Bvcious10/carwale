@@ -71,10 +71,11 @@ pipeline{
                 steps{
                     parallel(
                         "OPA Conftest":{
+                            dir('client'){
                                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                                    sh "docker run --rm -v $WORKSPACE:/project openpolicyagent/conftest test --policy opa-docker.rego Dockerfile"
+                                    sh "docker run --rm -v $pwd:/project openpolicyagent/conftest test --policy opa-docker.rego Dockerfile"
                                 }
-                            
+                            }
 
                         },
                         // "Trivy scan":{
