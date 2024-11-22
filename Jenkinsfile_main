@@ -73,27 +73,26 @@ pipeline{
                         "OPA Conftest":{
                             dir('client'){
                                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                                    // sh "docker run --rm -v $pwd:/project openpolicyagent/conftest test --policy opa-docker.rego Dockerfile"
-                                    sh "docker run --rm -v $pwd:/project openpolicyagent/conftest ls /project"
+                                    sh "docker run --rm -v $pwd:/project openpolicyagent/conftest test --policy opa-docker.rego Dockerfile"
                                 }
                             }
 
                         },
-                        "Trivy scan":{
-                            dir('client'){
-                                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                                sh "bash trivy-base-image-scan.sh"
-                                }
-                            }
+                        // "Trivy scan":{
+                        //     dir('client'){
+                        //         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        //         sh "bash trivy-base-image-scan.sh"
+                        //         }
+                        //     }
 
-                        }
+                        // }
                     )
                 }
-                post{
-                    always{
-                        echo "vulnerability check stage completed"
-                    }
-                }
+                // post{
+                //     always{
+                //         echo "vulnerability check stage completed"
+                //     }
+                // }
             }
 
             // stage('Build docker image'){
