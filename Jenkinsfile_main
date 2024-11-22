@@ -97,11 +97,10 @@ pipeline{
 
             stage('Build docker image'){
                 steps{
-                    withDockerRegistry(credentialsId: 'docker') {
-                            dir('client'){
-                                sh 'docker build -t benvic/car-app:"$GIT_COMMIT"'
-                                sh 'docker push -t benvic/car-app:"$GIT_COMMIT"'
-                            }
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker', url: 'docker.io') {
+                        sh 'docker build -t benvic/car-app:"$GIT_COMMIT"'
+                        sh 'docker push -t benvic/car-app:"$GIT_COMMIT"'
+                                  
                         }        
                     
                 }
