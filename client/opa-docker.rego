@@ -79,12 +79,30 @@ forbidden_users = [
 ]
 
 deny[msg] {
-    command := "user"
-    users := [name | input[i].Cmd == "user"; name := input[i].Value]
-    lastuser := users[count(users)-1]
-    contains(lower(lastuser[_]), forbidden_users[_])
-    msg = sprintf("Line %d: Last USER directive (USER %s) is forbidden", [i, lastuser])
+    command := "user"                         # The command to match
+    some i                                    # Declare a loop variable 'i'
+    input[i].Cmd == command                   # Match 'user' commands in input
+
+    users := [user |                         # Build the 'users' array safely
+        some j                                # Declare another loop variable 'j'
+        input[j].Cmd == command               # Match 'user' commands
+        user := input[j].Value                # Extract the 'Value' field
+    ]
+
+    count(users) > 0                          # Ensure the 'users' array is non-empty
+    lastuser := users[count(users) - 1]       # Safely retrieve the last user
+
+    some k                                    # Declare another loop variable 'k'
+    forbidden_user := forbidden_users[k]      # Iterate over forbidden_users
+    contains(lower(lastuser), forbidden_user) # Check if lastuser matches any forbidden user
+
+    msg := sprintf(
+        "Line %d: Last USER directive (USER %s) is forbidden",
+        [i + 1, lastuser]
+    )
 }
+
+
 
 # Do not sudo
 deny[msg] {
