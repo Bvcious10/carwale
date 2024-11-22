@@ -51,29 +51,47 @@ pipeline{
                 steps{
                     script{
                         dir('client'){
+                            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                             dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'dep-check'
                             dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                            }
 
                         }
                     }
                 }
+                post{
+                    always{
+                        echo "SCA stage completed"
+                    }
+                }
+                
             }
+
             stage('Vulnerability check-docker'){
                 steps{
                     parallel(
                         "OPA Conftest":{
                             dir('client'){
+                                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                 sh "docker run --rm -v ${pwd}:/project openpolicyagent/conftest test --policy opa-docker.rego Dockerfile"
+                                }
                             }
 
                         },
                         "Trivy scan":{
                             dir('client'){
+                                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                                 sh "bash trivy-base-image-scan.sh"
+                                }
                             }
 
                         }
                     )
+                }
+                post{
+                    always{
+                        echo "vulnerability check stage completed"
+                    }
                 }
             }
 

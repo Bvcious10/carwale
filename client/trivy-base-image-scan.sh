@@ -1,8 +1,8 @@
 #!/bin/bash
 dockerimage=$(awk 'NR==2 {print $2}' Dockerfile)
 
-docker run --rm -v ${pwd}:/root/.cache aquasec/trivy:0.17.2 -q image --exit-code 0 --severity HIGH --light $dockerimage
-docker run --rm -v ${pwd}:/root/.cache aquasec/trivy:0.17.2 -q image --exit-code 1 --severity CRITICAL --light $dockerimage
+docker run --rm -v ${pwd}:/root/.cache/ aquasec/trivy:0.17.2 -q image --exit-code 0 --severity HIGH --light $dockerimage
+docker run --rm -v ${pwd}:/root/.cache/ aquasec/trivy:0.17.2 -q image --exit-code 1 --severity CRITICAL --light $dockerimage
 
 exit_code=$?
 
