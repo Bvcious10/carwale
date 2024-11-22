@@ -15,30 +15,30 @@ pipeline{
             }
         }
 
-        // stage('terraform init'){
-        //     steps{
-        //         dir('client/AKS'){
-        //         sh 'terraform init'
-        //         }
-        //     }
-        // }
+        stage('terraform init'){
+            steps{
+                dir('client/AKS'){
+                sh 'terraform init'
+                }
+            }
+        }
 
-        // stage('terraform validate'){
-        //     steps{
-        //         dir('client/AKS'){
-        //         sh 'terraform validate'
-        //         }
-        //     }
-        // }
+        stage('terraform validate'){
+            steps{
+                dir('client/AKS'){
+                sh 'terraform validate'
+                }
+            }
+        }
 
 
-        // stage('terraform plan'){
-        //     steps{
-        //         dir('client/AKS'){
-        //         sh 'terraform plan'
-        //         }
-        //     }
-        // }
+        stage('terraform plan'){
+            steps{
+                dir('client/AKS'){
+                sh 'terraform plan'
+                }
+            }
+        }
 
         stage('terraform apply/destroy'){
             steps{

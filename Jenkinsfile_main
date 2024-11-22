@@ -127,7 +127,7 @@ pipeline{
             }
             stage('Owasp zap Dast'){
                 steps{
-                    sh "docker run -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t https://172.212.39.74:80"
+                    sh "docker run -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t https://172.212.39.74"
                 }
             }
         }
