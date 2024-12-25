@@ -20,7 +20,7 @@
 7. **SCA SCANNER**: Owasp Dependency Check
 8. **Container Scanner**: Trivy
 9. **IAC SCAN**: TFSec
-10. **Open Policy Agent**: Conftest
+10. **Compliance As Code**: Conftest
 11. **DAST SCAN**: Owasp Zap
 
 ## Deployment Details:
